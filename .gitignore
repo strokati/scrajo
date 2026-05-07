@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Prisma
+generated/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Local Claude overrides
+CLAUDE.local.md
+
+# Claude Code internal
+.claude/worktrees/
+.claude/plans/
+
+# Test & Playwright
+test-results/
+playwright-report/
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
