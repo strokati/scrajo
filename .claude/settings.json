@@ -1,45 +1,45 @@
 {
-  "permissions": {
-    "allow": [
-      "Read",
-      "Glob",
-      "Grep",
-      "Bash(git status:*)",
-      "Bash(git log:*)",
-      "Bash(git diff:*)",
-      "Bash(pnpm lint:*)",
-      "Bash(pnpm typecheck:*)",
-      "Bash(pnpm build:*)",
-      "Bash(pnpm run:*)",
-      "Bash(docker compose ps:*)",
-      "Bash(docker compose logs:*)",
-      "Bash(npx prisma:*)"
-    ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "pnpm biome check --write \"$FILEPATHS\"",
-            "timeout": 10000
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "If the file path matches .env, .env.local, or any .env.* pattern, refuse the edit and warn the user that secrets must not be committed. Otherwise proceed.",
-            "timeout": 5000
-          }
-        ]
-      }
-    ]
-  }
+	"permissions": {
+		"allow": [
+			"Read",
+			"Glob",
+			"Grep",
+			"Bash(git status:*)",
+			"Bash(git log:*)",
+			"Bash(git diff:*)",
+			"Bash(pnpm lint:*)",
+			"Bash(pnpm typecheck:*)",
+			"Bash(pnpm build:*)",
+			"Bash(pnpm run:*)",
+			"Bash(docker compose ps:*)",
+			"Bash(docker compose logs:*)",
+			"Bash(npx prisma:*)"
+		]
+	},
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "pnpm biome check --write \"$FILEPATHS\"",
+						"timeout": 10000
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "prompt",
+						"prompt": "If the file path matches .env, .env.local, or any .env.* pattern, refuse the edit and warn the user that secrets must not be committed. Otherwise proceed.",
+						"timeout": 5000
+					}
+				]
+			}
+		]
+	}
 }

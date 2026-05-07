@@ -1,0 +1,136 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+model JobSite {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  baseUrl     String
+  scraperType String
+  config      Json         @default("{}")
+  active      Boolean      @default(true)
+  deletedAt   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  scrapeJobs  ScrapeJob[]
+  jobListings JobListing[]
+
+  @@map("job_sites")
+}
+
+model ScrapeJob {
+  id          String     @id @default(uuid())
+  jobSiteId   String
+  jobSite     JobSite    @relation(fields: [jobSiteId], references: [id])
+  status      JobStatus  @default(PENDING)
+  query       String?
+  location    String?
+  maxPages    Int        @default(5)
+  startedAt   DateTime?
+  completedAt DateTime?
+  error       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  jobListings JobListing[]
+
+  @@index([status])
+  @@index([jobSiteId])
+  @@map("scrape_jobs")
+}
+
+model JobListing {
+  id           String        @id @default(uuid())
+  jobSiteId    String
+  jobSite      JobSite       @relation(fields: [jobSiteId], references: [id])
+  scrapeJobId  String
+  scrapeJob    ScrapeJob     @relation(fields: [scrapeJobId], references: [id])
+  externalId   String?
+  title        String
+  company      String
+  location     String?
+  salary       String?
+  description  String        @default("")
+  url          String        @default("")
+  parsedData   Json?
+  tags         String[]
+  postedDate   DateTime?
+  expiresAt    DateTime?
+  status       ListingStatus @default(NEW)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+
+  @@unique([jobSiteId, externalId])
+  @@index([jobSiteId])
+  @@index([scrapeJobId])
+  @@index([status])
+  @@index([tags])
+  @@map("job_listings")
+}
+
+model ApplicationProfile {
+  id          String        @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  resumeUrl   String?
+  coverLetter String?
+  answers     Json?
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  applications Application[]
+
+  @@map("application_profiles")
+}
+
+model Application {
+  id           String             @id @default(uuid())
+  jobListingId String
+  jobListing   JobListing         @relation(fields: [jobListingId], references: [id])
+  profileId    String
+  profile      ApplicationProfile @relation(fields: [profileId], references: [id])
+  status       AppStatus          @default(DRAFT)
+  appliedAt    DateTime?
+  notes        String?
+  error        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([jobListingId])
+  @@index([profileId])
+  @@index([status])
+  @@map("applications")
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ListingStatus {
+  NEW
+  VIEWED
+  SAVED
+  REJECTED
+  APPLIED
+  INTERESTED
+}
+
+enum AppStatus {
+  DRAFT
+  SUBMITTED
+  INTERVIEWING
+  REJECTED
+  OFFERED
+  WITHDRAWN
+}

@@ -1,20 +1,20 @@
 {
-  "name": "scrajo",
-  "private": true,
-  "type": "module",
-  "packageManager": "pnpm@10.11.0",
-  "scripts": {
-    "dev": "docker compose up -d && pnpm -r --parallel run dev",
-    "build": "pnpm -r run build",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
-    "typecheck": "pnpm -r run typecheck",
-    "db:up": "docker compose up -d postgres redis",
-    "db:down": "docker compose down"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "typescript": "^5.8.0"
-  }
+	"name": "scrajo",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@10.11.0",
+	"scripts": {
+		"dev": "docker compose up -d && pnpm -r --parallel run dev",
+		"build": "pnpm -r run build",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"typecheck": "pnpm -r run typecheck",
+		"db:up": "docker compose up -d postgres redis",
+		"db:down": "docker compose down"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.0.0",
+		"typescript": "^5.8.0"
+	}
 }
