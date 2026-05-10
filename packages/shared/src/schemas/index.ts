@@ -96,6 +96,52 @@ export const queueStatsSchema = z.object({
 
 export type QueueStats = z.infer<typeof queueStatsSchema>;
 
+// --- AI Providers ---
+
+export const AIProviderEnum = z.enum(['claude', 'openai', 'glm5']);
+export type AIProvider = z.infer<typeof AIProviderEnum>;
+
+// --- User Settings ---
+
+export const updateSettingsSchema = z.object({
+	aiProvider: AIProviderEnum.optional(),
+	aiApiKey: z.string().min(1).optional(),
+	aiModel: z.string().min(1).max(255).optional(),
+	includeKeywords: z.array(z.string()).optional(),
+	excludeKeywords: z.array(z.string()).optional(),
+	blockedCompanies: z.array(z.string()).optional(),
+	notifyEmail: z.string().email().optional(),
+	autoSubmit: z.boolean().optional(),
+	dailyApplyCap: z.number().int().min(1).max(1000).optional(),
+});
+
+export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>;
+
+export const userSettingsResponseSchema = z.object({
+	id: z.string(),
+	aiProvider: z.string(),
+	aiApiKeyMasked: z.string().nullable(),
+	aiModel: z.string().nullable(),
+	includeKeywords: z.array(z.string()),
+	excludeKeywords: z.array(z.string()),
+	blockedCompanies: z.array(z.string()),
+	notifyEmail: z.string().nullable(),
+	autoSubmit: z.boolean(),
+	dailyApplyCap: z.number(),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+});
+
+export type UserSettingsResponse = z.infer<typeof userSettingsResponseSchema>;
+
+export const testAIRequestSchema = z.object({
+	provider: AIProviderEnum,
+	apiKey: z.string().min(1),
+	model: z.string().min(1).max(255).optional(),
+});
+
+export type TestAIRequest = z.infer<typeof testAIRequestSchema>;
+
 // --- Response Types ---
 
 export interface PaginatedResponse<T> {

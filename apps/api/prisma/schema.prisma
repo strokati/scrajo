@@ -134,3 +134,22 @@ enum AppStatus {
   OFFERED
   WITHDRAWN
 }
+
+model UserSettings {
+  id                String   @id @default("singleton")
+  aiProvider        String   @default("claude")
+  aiApiKeyEncrypted String?
+  aiApiKeyIv        String?
+  aiApiKeyTag       String?
+  aiModel           String?
+  includeKeywords   String[]
+  excludeKeywords   String[]
+  blockedCompanies  String[]
+  notifyEmail       String?
+  autoSubmit        Boolean  @default(false)
+  dailyApplyCap     Int      @default(10)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("user_settings")
+}

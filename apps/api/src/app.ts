@@ -7,6 +7,7 @@ import queuePlugin from './plugins/queue.js';
 import { healthRoutes } from './routes/health.js';
 import { jobsRoutes } from './routes/jobs.js';
 import { queueRoutes } from './routes/queue.js';
+import { settingsRoutes } from './routes/settings.js';
 import { sitesRoutes } from './routes/sites.js';
 
 export async function createApp() {
@@ -27,6 +28,7 @@ export async function createApp() {
 	await app.register(queuePlugin);
 
 	app.register(healthRoutes);
+	app.register(settingsRoutes);
 	app.register(sitesRoutes);
 	app.register(jobsRoutes);
 	app.register(queueRoutes);

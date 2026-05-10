@@ -1,0 +1,29 @@
+{
+	"name": "@scrajo/scraper",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"./ai": {
+			"import": "./dist/ai/index.js",
+			"types": "./dist/ai/index.d.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@anthropic-ai/sdk": "^0.52.0",
+		"openai": "^4.100.0",
+		"zod": "^3.25.0"
+	},
+	"devDependencies": {
+		"@types/node": "^22.0.0",
+		"typescript": "^5.8.0",
+		"vitest": "^3.2.0"
+	}
+}

@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@fastify/cors": "^11.0.0",
 		"@prisma/client": "^6.9.0",
+		"@scrajo/scraper": "workspace:*",
 		"@scrajo/shared": "workspace:*",
 		"bullmq": "^5.53.0",
 		"dotenv": "^17.4.2",
