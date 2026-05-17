@@ -6,7 +6,7 @@ function sanitizeSelector(selector: string): string {
 	if (selector.length > 500) {
 		throw new SelectorFailedError(`Selector too long: ${selector.length} chars`);
 	}
-	if (!/^[\w\-\s\[\]="'.,:#>*+~()^$|]+$/.test(selector)) {
+	if (!/^[\w\-\s[\]="'.,:#>*+~()^$|]+$/.test(selector)) {
 		throw new SelectorFailedError(`Invalid characters in selector: "${selector}"`);
 	}
 	return selector;

@@ -12,7 +12,8 @@
 			"!!**/dist",
 			"!!**/build",
 			"!!**/generated",
-			"!!**/.pnpm-store"
+			"!!**/.pnpm-store",
+			"!!apps/web/src/index.css"
 		]
 	},
 	"formatter": {
