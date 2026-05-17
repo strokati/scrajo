@@ -5,6 +5,10 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
 		"./ai": {
 			"import": "./dist/ai/index.js",
 			"types": "./dist/ai/index.d.ts"
@@ -18,7 +22,10 @@
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.52.0",
+		"@scrajo/api": "workspace:*",
+		"cheerio": "^1.0.0",
 		"openai": "^4.100.0",
+		"playwright": "^1.52.0",
 		"zod": "^3.25.0"
 	},
 	"devDependencies": {

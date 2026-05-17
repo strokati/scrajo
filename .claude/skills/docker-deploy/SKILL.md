@@ -1,12 +1,12 @@
 ---
-name: Coolify Deploy Workflow
+name: docker-deploy
 description: >
-  Use when the user asks to "deploy to production", "deploy to staging", "push to Coolify",
-  "update the server", "check deployment status", or "configure Coolify".
+    Use when the user asks to "deploy to production", "deploy to staging", "push to Coolify",
+    "update the server", "check deployment status", or "configure Coolify".
 version: 0.1.0
 ---
 
-# Coolify Deploy Workflow
+# Docker Deploy Workflow
 
 ## Pre-deploy checks
 
@@ -28,6 +28,7 @@ All three must pass with zero errors.
 ### 3. Verify environment variables
 
 Check that all required env vars are set in Coolify UI:
+
 - `DATABASE_URL` — PostgreSQL connection string
 - `REDIS_URL` — Redis connection string
 - `ANTHROPIC_API_KEY` — Claude API key
@@ -56,6 +57,7 @@ Coolify auto-detects the push via webhook and starts building.
 ## Rollback
 
 If deployment fails:
+
 1. Check Coolify logs for the error
 2. Verify environment variables in Coolify UI
 3. If database migration failed, check `apps/api/prisma/migrations/` status

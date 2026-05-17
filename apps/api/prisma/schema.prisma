@@ -9,17 +9,21 @@ generator client {
 }
 
 model JobSite {
-  id          String       @id @default(uuid())
-  name        String       @unique
-  baseUrl     String
-  scraperType String
-  config      Json         @default("{}")
-  active      Boolean      @default(true)
-  deletedAt   DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  scrapeJobs  ScrapeJob[]
-  jobListings JobListing[]
+  id               String         @id @default(uuid())
+  name             String         @unique
+  baseUrl          String
+  scraperType      String
+  config           Json           @default("{}")
+  active           Boolean        @default(true)
+  deletedAt        DateTime?
+  lastScrapedAt    DateTime?
+  lastScrapeStatus String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  scrapeJobs       ScrapeJob[]
+  jobListings      JobListing[]
+  selectors        SiteSelectors?
+  scrapeRuns       ScrapeRun[]
 
   @@map("job_sites")
 }
@@ -152,4 +156,42 @@ model UserSettings {
   updatedAt         DateTime @updatedAt
 
   @@map("user_settings")
+}
+
+model SiteSelectors {
+  id          String   @id @default(uuid())
+  siteId      String   @unique
+  site        JobSite  @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  container   String
+  title       String
+  company     String
+  location    String
+  salary      String?
+  applyUrl    String
+  postedAt    String?
+  pagination  String?
+  confidence  Float    @default(0)
+  failCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_selectors")
+}
+
+model ScrapeRun {
+  id         String   @id @default(uuid())
+  siteId     String
+  site       JobSite  @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  mode       String   // "fast" | "ai_learn" | "ai_rescue"
+  aiProvider String?
+  jobsFound  Int      @default(0)
+  jobsSaved  Int      @default(0)
+  durationMs Int      @default(0)
+  status     String   // "success" | "error" | "requires_manual"
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([siteId])
+  @@index([createdAt])
+  @@map("scrape_runs")
 }

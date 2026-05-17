@@ -1,12 +1,12 @@
 ---
-name: Prisma Migration Workflow
+name: db-migrations
 description: >
-  Use when the user asks to "create a migration", "run migrations", "update the database schema",
-  "add a Prisma model", "reset the database", or "generate Prisma client".
+    Use when the user asks to "create a migration", "run migrations", "update the database schema",
+    "add a Prisma model", "reset the database", or "generate Prisma client".
 version: 0.1.0
 ---
 
-# Prisma Migration Workflow
+# Database Migrations
 
 ## Steps
 
@@ -42,6 +42,7 @@ The generated client outputs to `apps/api/generated/` (configured in schema.pris
 ### 5. Verify
 
 Run the API dev server briefly to confirm the client imports work:
+
 ```bash
 pnpm --filter @scrajo/api run dev
 ```

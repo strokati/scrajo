@@ -1,8 +1,8 @@
 ---
-name: REST API Design Rules
+name: api-conventions
 description: >
-  Use when the user asks to "create an API endpoint", "add a route", "design a REST endpoint",
-  "define request/response types", or "build an API feature".
+    Use when the user asks to "create an API endpoint", "add a route", "design a REST endpoint",
+    "define request/response types", or "build an API feature".
 version: 0.1.0
 ---
 
@@ -46,10 +46,12 @@ Zod schemas are the single source of truth — derive TypeScript types and Fasti
 ## Pagination
 
 All list endpoints accept `?page=1&limit=20` with defaults:
+
 - `page`: defaults to 1, minimum 1
 - `limit`: defaults to 20, minimum 1, maximum 100
 
 Response shape:
+
 ```json
 {
   "data": [...],
@@ -62,14 +64,16 @@ Response shape:
 ## Error format
 
 All errors follow this shape:
+
 ```json
 {
-  "error": "Human-readable message",
-  "code": "ERROR_CODE_SNAKE_CASE"
+	"error": "Human-readable message",
+	"code": "ERROR_CODE_SNAKE_CASE"
 }
 ```
 
 Common error codes:
+
 - `VALIDATION_ERROR` (400) — request body/params failed Zod validation
 - `NOT_FOUND` (404) — resource not found
 - `CONFLICT` (409) — duplicate resource
