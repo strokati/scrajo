@@ -21,7 +21,7 @@ const DEFAULTS = {
 	updatedAt: new Date().toISOString(),
 };
 
-function toResponse(row: NonNullable<UserSettingsRow>) {
+function toResponse(row: NonNullable<UserSettingsRow>, log?: FastifyInstance['log']) {
 	let aiApiKeyMasked: string | null = null;
 	if (row.aiApiKeyEncrypted) {
 		try {
@@ -31,7 +31,8 @@ function toResponse(row: NonNullable<UserSettingsRow>) {
 				row.aiApiKeyTag ?? '',
 			);
 			aiApiKeyMasked = maskApiKey(plain);
-		} catch {
+		} catch (err) {
+			log?.warn({ err }, 'Failed to decrypt API key');
 			aiApiKeyMasked = '****';
 		}
 	}
@@ -54,6 +55,10 @@ function toResponse(row: NonNullable<UserSettingsRow>) {
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
+export function resetRateLimiter(): void {
+	rateLimitMap.clear();
+}
+
 function checkRateLimit(ip: string, limit = 5, windowMs = 60_000): boolean {
 	const now = Date.now();
 	const entry = rateLimitMap.get(ip);
@@ -72,7 +77,7 @@ export async function settingsRoutes(app: FastifyInstance) {
 		if (!row) {
 			return reply.send({ data: DEFAULTS });
 		}
-		return reply.send({ data: toResponse(row) });
+		return reply.send({ data: toResponse(row, app.log) });
 	});
 
 	// PUT /api/v1/settings
@@ -112,7 +117,7 @@ export async function settingsRoutes(app: FastifyInstance) {
 			create: { id: 'singleton', ...updateData },
 		});
 
-		return reply.send({ data: toResponse(row) });
+		return reply.send({ data: toResponse(row, app.log) });
 	});
 
 	// POST /api/v1/settings/test-ai

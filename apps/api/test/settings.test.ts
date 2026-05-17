@@ -1,8 +1,17 @@
 import { createApp } from '../src/app.js';
 import { decryptApiKey } from '../src/lib/crypto.js';
 import { prisma } from '../src/lib/prisma.js';
+import { resetRateLimiter } from '../src/routes/settings.js';
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+
+vi.mock('@scrajo/scraper/ai', () => ({
+	createAIProvider: vi.fn(),
+}));
+
+import { createAIProvider } from '@scrajo/scraper/ai';
+
+const mockCreateAIProvider = vi.mocked(createAIProvider);
 
 describe('Settings API', () => {
 	let app: Awaited<ReturnType<typeof createApp>>;
@@ -15,6 +24,7 @@ describe('Settings API', () => {
 
 	afterEach(async () => {
 		await prisma.userSettings.deleteMany();
+		vi.restoreAllMocks();
 	});
 
 	afterAll(async () => {
@@ -126,5 +136,74 @@ describe('Settings API', () => {
 		});
 
 		expect(response.json().data.aiApiKeyMasked).toBe('****abcd');
+	});
+
+	test('POST /api/v1/settings/test-ai returns ok: true with valid provider', async () => {
+		mockCreateAIProvider.mockReturnValue({
+			name: 'claude' as const,
+			testConnection: vi.fn().mockResolvedValue(true),
+			extractSelectors: vi.fn(),
+			detectPagination: vi.fn(),
+		});
+
+		const response = await app.inject({
+			method: 'POST',
+			url: '/api/v1/settings/test-ai',
+			payload: {
+				provider: 'claude',
+				apiKey: 'sk-test-key',
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual({ ok: true });
+	});
+
+	test('POST /api/v1/settings/test-ai returns ok: false on failure', async () => {
+		mockCreateAIProvider.mockReturnValue({
+			name: 'openai' as const,
+			testConnection: vi.fn().mockResolvedValue(false),
+			extractSelectors: vi.fn(),
+			detectPagination: vi.fn(),
+		});
+
+		const response = await app.inject({
+			method: 'POST',
+			url: '/api/v1/settings/test-ai',
+			payload: {
+				provider: 'openai',
+				apiKey: 'bad-key',
+			},
+		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.json()).toEqual({ ok: false });
+	});
+
+	test('POST /api/v1/settings/test-ai rate limits after 5 calls', async () => {
+		resetRateLimiter();
+		mockCreateAIProvider.mockReturnValue({
+			name: 'claude' as const,
+			testConnection: vi.fn().mockResolvedValue(true),
+			extractSelectors: vi.fn(),
+			detectPagination: vi.fn(),
+		});
+
+		for (let i = 0; i < 5; i++) {
+			const res = await app.inject({
+				method: 'POST',
+				url: '/api/v1/settings/test-ai',
+				payload: { provider: 'claude', apiKey: 'key' },
+			});
+			expect(res.statusCode).toBe(200);
+		}
+
+		const response = await app.inject({
+			method: 'POST',
+			url: '/api/v1/settings/test-ai',
+			payload: { provider: 'claude', apiKey: 'key' },
+		});
+
+		expect(response.statusCode).toBe(429);
 	});
 });

@@ -6,6 +6,7 @@ import {
 } from '@scrajo/shared';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import type { Prisma } from '../../generated/client.js';
 import { sendError } from '../lib/errors.js';
 import { prisma } from '../lib/prisma.js';
 
@@ -77,7 +78,7 @@ export async function sitesRoutes(app: FastifyInstance) {
 					name: parsed.data.name,
 					baseUrl: parsed.data.baseUrl,
 					scraperType: parsed.data.scraperType,
-					config: parsed.data.config as Record<string, unknown>,
+					config: parsed.data.config as Prisma.InputJsonValue,
 				},
 			});
 			return reply.status(201).send({ data: site });
@@ -112,9 +113,13 @@ export async function sitesRoutes(app: FastifyInstance) {
 			return sendError(reply, 404, 'Site not found', 'NOT_FOUND');
 		}
 
+		const { config, ...rest } = parsed.data;
 		const updated = await prisma.jobSite.update({
 			where: { id },
-			data: parsed.data,
+			data: {
+				...rest,
+				...(config !== undefined ? { config: config as Prisma.InputJsonValue } : {}),
+			},
 		});
 
 		return reply.send({ data: updated });
